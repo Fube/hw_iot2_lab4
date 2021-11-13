@@ -1,7 +1,7 @@
 from inspect import getmembers
 from db.DBManager import instance as db
 from db.DButil import DBUtil
-from utils.IsPrimitiveOrString import is_primitive_or_string
+from utils.IsDBNative import is_db_native
 
 class Entity(object):
     def __init__(self, __table__):
@@ -21,8 +21,8 @@ class Entity(object):
             for field in fields:
                 attr = getattr(self, field)
                 # if not '__managed__' in attr.__dict__:
-                if is_primitive_or_string(attr):
-                    print(f"{attr} was primitive or string")
+                if is_db_native(attr):
+                    print(f"{field} was db native")
                     values[field] = attr
             
             print(values)
