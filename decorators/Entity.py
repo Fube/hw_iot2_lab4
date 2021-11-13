@@ -1,4 +1,5 @@
 from inspect import getmembers
+from db.DBManager import instance as db
 
 class Entity(object):
     def __init__(self, __table__):

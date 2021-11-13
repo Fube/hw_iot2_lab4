@@ -23,4 +23,5 @@ class DBManager():
         cursor.execute(query)
         self.conn.commit()
 
+instance = DBManager()
     
