@@ -24,7 +24,8 @@ def main():
     book.title = "The Lord of the Rings"
     book.author = author
 
-    author.save()
+    #author.save()
+    print(Author.get_all())
 
 if __name__ == '__main__':
     print("calling main")

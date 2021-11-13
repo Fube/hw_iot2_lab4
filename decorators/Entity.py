@@ -1,4 +1,5 @@
 from inspect import getmembers
+from typing import Tuple
 from db.DBManager import instance as db
 from db.DButil import DBUtil
 from utils.IsDBNative import is_db_native
@@ -27,10 +28,22 @@ class Entity(object):
             
             db.execute(DBUtil.insert(self.__table__, values))
         
+        
         def get_all(cls):
-            return db.execute(DBUtil.select_all(self.__table__))
+            ret = []
+            raw = db.query(DBUtil.select_all(self.__table__))
+            for row in raw:
+                obj = cls()
+                for field in fields:
+                    setattr(obj, field, row[field])
+                ret.append(obj)
+            obj.__changed__ = False # It has not changed, it has been retrieved from db
+
+            return ret
+                    
 
         get_all_m = classmethod(get_all)
+                
 
         fields_to_set = {
             "__table__": self.__table__,

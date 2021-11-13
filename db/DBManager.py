@@ -16,7 +16,9 @@ class DBManager():
     def query(self, query):
         cursor = self.conn.cursor()
         cursor.execute(query)
-        return cursor.fetchall()
+        columns = cursor.description 
+        result = [{columns[index][0]:column for index, column in enumerate(value)} for value in cursor.fetchall()] # Frankly, this is copied from stackoverflow. Sorry.
+        return result
 
     def execute(self, query):
         cursor = self.conn.cursor()
