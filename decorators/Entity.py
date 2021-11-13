@@ -1,5 +1,6 @@
 from inspect import getmembers
 from db.DBManager import instance as db
+from db.DButil import DBUtil
 
 class Entity(object):
     def __init__(self, __table__):
@@ -13,7 +14,18 @@ class Entity(object):
         def save(self):
             if not self.__changed__:
                 return
-            return "Saving..."
+
+            values = dict()
+
+            for field in fields:
+                print(field)
+                attr = getattr(self, field)
+                print(attr)
+                if not '__managed__' in attr.__dict__:
+                    values[field] = attr
+            
+            print(values)
+            db.execute(DBUtil.insert(self.__table__, values))
         
         def get_all(cls):
             return "Getting all..."
@@ -21,20 +33,29 @@ class Entity(object):
         get_all_m = classmethod(get_all)
 
         fields_to_set = {
+            "__table__": self.__table__,
+            "__managed__": True,
             "__changed__": False,
             'save': save,
             'get_all': get_all_m,
         }
 
-        for field in fields:
-            backer = f"__{field}__"
-            fields_to_set[backer] = None
-
-            def setter(self, value):
+        def get_factory(field):
+            def get(self):
+                return getattr(self, field)
+            return get
+        
+        def set_factory(field):
+            def set(self, value):
                 self.__changed__ = True
-                fields_to_set[backer] = value
+                setattr(self, field, value)
+            return set
 
-            fields_to_set[field] = property(lambda self: self.__dict__[backer], setter)
+        for field in fields:
+            print(field)
+            backer = f"__{field}__"
+        
+            fields_to_set[field] = property(get_factory(backer), set_factory(backer))
 
         to_return = type(clazz.__name__, (), fields_to_set)
 

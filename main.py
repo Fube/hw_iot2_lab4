@@ -20,12 +20,11 @@ def main():
     author.birth_date = date(1955, 1, 1)
     author.death_date = date(2000, 1, 1)
 
-    book = Books()
-    book.title = "The Lord of the Rings"
-    book.author = author
+    # book = Books()
+    # book.title = "The Lord of the Rings"
+    # book.author = author
 
-    print(book.save())
-    print(book.get_all())
+    print(author.name)
 
 if __name__ == '__main__':
     print("calling main")
