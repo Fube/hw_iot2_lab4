@@ -25,8 +25,8 @@ def main():
     book.author = author
 
     #author.save()
-    print(Author.get_all())
+    #print(Author.get_all())
+    print(Author.get_by_id(1).name)
 
 if __name__ == '__main__':
-    print("calling main")
     main()
