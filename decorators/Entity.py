@@ -13,8 +13,17 @@ class Entity(object):
             if not self.__changed__:
                 return
             return "Saving..."
+        
+        def get_all(cls):
+            return "Getting all..."
 
-        fields_to_set = {"__changed__": False, 'save': save}
+        get_all_m = classmethod(get_all)
+
+        fields_to_set = {
+            "__changed__": False,
+            'save': save,
+            'get_all': get_all_m,
+        }
 
         for field in fields:
             backer = f"__{field}__"
@@ -28,6 +37,6 @@ class Entity(object):
 
         to_return = type(clazz.__name__, (), fields_to_set)
 
-        
+
         return to_return
 
