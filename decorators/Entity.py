@@ -28,7 +28,7 @@ class Entity(object):
             db.execute(DBUtil.insert(self.__table__, values))
         
         def get_all(cls):
-            return "Getting all..."
+            return db.execute(DBUtil.select_all(self.__table__))
 
         get_all_m = classmethod(get_all)
 

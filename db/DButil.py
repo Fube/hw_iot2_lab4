@@ -10,3 +10,7 @@ class DBUtil():
     @staticmethod
     def get_identity():
         return "select @@IDENTITY"
+
+    @staticmethod
+    def select_all(table: str) -> str:
+        return "select * from %s" % table
