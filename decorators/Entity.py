@@ -1,14 +1,33 @@
+from inspect import getmembers
+
 class Entity(object):
-    def __init__(self, table):
-        self.table = table
+    def __init__(self, __table__):
+        self.__table__ = __table__
 
 
-    def __call__(self, clazz):
+    def __call__(self, clazz: type):
+        members = getmembers(clazz)[0][1] # [0][1] -> __annotations__
+        fields = list(members.keys())
 
-        class Wrapped(clazz):
-            table = self.table
-            def new_method(self, value):
-                return value * 2
+        def save(self):
+            if not self.__changed__:
+                return
+            return "Saving..."
 
-        return Wrapped
+        fields_to_set = {"__changed__": False, 'save': save}
+
+        for field in fields:
+            backer = f"__{field}__"
+            fields_to_set[backer] = None
+
+            def setter(self, value):
+                self.__changed__ = True
+                fields_to_set[backer] = value
+
+            fields_to_set[field] = property(lambda self: self.__dict__[backer], setter)
+
+        to_return = type(clazz.__name__, (), fields_to_set)
+
+        
+        return to_return
 
