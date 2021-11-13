@@ -28,21 +28,35 @@ class Entity(object):
             
             db.execute(DBUtil.insert(self.__table__, values))
         
-        
+
+        def back_to_entity(obj, row: dict):
+            for field in fields:
+                setattr(obj, field, row[field])
+            return obj                
+
+
         def get_all(cls):
             ret = []
             raw = db.query(DBUtil.select_all(self.__table__))
             for row in raw:
                 obj = cls()
-                for field in fields:
-                    setattr(obj, field, row[field])
-                ret.append(obj)
+                ret.append(back_to_entity(obj, row))
             obj.__changed__ = False # It has not changed, it has been retrieved from db
 
             return ret
+
+        
+        def get_by_id(cls, id):
+            raw = db.query(DBUtil.select_by_id(self.__table__, id))
+            obj = cls()
+            back_to_entity(obj, raw[0])
+            obj.__changed__ = False
+
+            return obj
                     
 
         get_all_m = classmethod(get_all)
+        get_by_id_m = classmethod(get_by_id)
                 
 
         fields_to_set = {
@@ -51,6 +65,7 @@ class Entity(object):
             "__changed__": False,
             'save': save,
             'get_all': get_all_m,
+            'get_by_id': get_by_id_m,
         }
 
         def get_factory(field):

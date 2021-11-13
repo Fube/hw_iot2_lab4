@@ -14,3 +14,7 @@ class DBUtil():
     @staticmethod
     def select_all(table: str) -> str:
         return "select * from %s" % table
+    
+    @staticmethod
+    def select_by_id(table: str, id: int) -> str:
+        return "select * from %s where id=%d" % (table, id)
