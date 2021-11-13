@@ -41,15 +41,15 @@ class Entity(object):
         }
 
         def get_factory(field):
-            def get(self):
+            def _get(self):
                 return getattr(self, field)
-            return get
+            return _get
         
         def set_factory(field):
-            def set(self, value):
+            def _set(self, value):
                 self.__changed__ = True
                 setattr(self, field, value)
-            return set
+            return _set
 
         for field in fields:
             print(field)
