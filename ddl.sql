@@ -5,3 +5,13 @@ create table authors(
     death_date date default null,
     primary key(id)
 );
+
+create table books(
+    id int not null auto_increment,
+    title varchar(255) not null,
+    author_id int not null,
+    primary key(id),
+    foreign key(author_id)
+        references authors(id)
+        on delete cascade
+);

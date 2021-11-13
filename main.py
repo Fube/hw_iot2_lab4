@@ -26,7 +26,9 @@ def main():
 
     #author.save()
     #print(Author.get_all())
-    print(Author.get_by_id(1).name)
+    #print(Author.get_by_id(1).name)
+
+    book.save()
 
 if __name__ == '__main__':
     main()

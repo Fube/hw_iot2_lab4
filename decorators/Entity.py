@@ -21,10 +21,11 @@ class Entity(object):
 
             for field in fields:
                 attr = getattr(self, field)
-                # if not '__managed__' in attr.__dict__:
                 if is_db_native(attr):
                     print(f"{field} was db native")
                     values[field] = attr
+                elif '__managed__' in attr.__dict__:
+                    print(f"{field} was managed")
             
             db.execute(DBUtil.insert(self.__table__, values))
         
