@@ -24,8 +24,10 @@ class Entity(object):
                 if is_db_native(attr):
                     print(f"{field} was db native")
                     values[field] = attr
-                elif '__managed__' in attr.__dict__:
-                    print(f"{field} was managed")
+                else:
+                    print(f"{field} was not db native")
+                    print(attr.__dict__)
+
             
             db.execute(DBUtil.insert(self.__table__, values))
         
@@ -59,15 +61,12 @@ class Entity(object):
         get_all_m = classmethod(get_all)
         get_by_id_m = classmethod(get_by_id)
                 
-
-        fields_to_set = {
-            "__table__": self.__table__,
-            "__managed__": True,
-            "__changed__": False,
-            'save': save,
-            'get_all': get_all_m,
-            'get_by_id': get_by_id_m,
-        }
+        def init_factory(table_name):
+            def init(self):
+                self.__changed__ = False
+                self.__managed__ = True
+                self.__table__ = table_name
+            return init
 
         def get_factory(field):
             def _get(self):
@@ -79,6 +78,13 @@ class Entity(object):
                 self.__changed__ = True
                 setattr(self, field, value)
             return _set
+
+        fields_to_set = {
+            "__init__": init_factory(self.__table__),
+            'save': save,
+            'get_all': get_all_m,
+            'get_by_id': get_by_id_m,
+        }
 
         for field in fields:
             backer = f"__{field}__"
