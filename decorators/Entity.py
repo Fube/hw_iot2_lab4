@@ -1,6 +1,7 @@
 from inspect import getmembers
 from db.DBManager import instance as db
 from db.DButil import DBUtil
+from utils.IsPrimitiveOrString import is_primitive_or_string
 
 class Entity(object):
     def __init__(self, __table__):
@@ -18,10 +19,10 @@ class Entity(object):
             values = dict()
 
             for field in fields:
-                print(field)
                 attr = getattr(self, field)
-                print(attr)
-                if not '__managed__' in attr.__dict__:
+                # if not '__managed__' in attr.__dict__:
+                if is_primitive_or_string(attr):
+                    print(f"{attr} was primitive or string")
                     values[field] = attr
             
             print(values)
