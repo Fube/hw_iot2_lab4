@@ -25,7 +25,6 @@ class Entity(object):
                     print(f"{field} was db native")
                     values[field] = attr
             
-            print(values)
             db.execute(DBUtil.insert(self.__table__, values))
         
         def get_all(cls):
@@ -53,7 +52,6 @@ class Entity(object):
             return _set
 
         for field in fields:
-            print(field)
             backer = f"__{field}__"
         
             fields_to_set[field] = property(get_factory(backer), set_factory(backer))
