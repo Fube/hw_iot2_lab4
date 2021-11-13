@@ -1,19 +1,28 @@
 from inspect import getmembers
-from typing import Tuple
 from db.DBManager import instance as db
 from db.DButil import DBUtil
+from db.relationships import Relationship, OneToMany
 from utils.IsDBNative import is_db_native
 
-class Entity(object):
+class Entity():
     def __init__(self, __table__):
         self.__table__ = __table__
 
 
     def __call__(self, clazz: type):
         members = getmembers(clazz)[0][1] # [0][1] -> __annotations__
-        fields = list(members.keys())
+        relations = []
+        fields = []
 
-        def save(self):
+        for member in members:
+            if isinstance(members[member], Relationship):
+                relations.append(member)
+            else:
+                fields.append(member)
+
+
+
+        def __save__(self, do_after=None):
             if not self.__changed__:
                 return
 
@@ -21,15 +30,17 @@ class Entity(object):
 
             for field in fields:
                 attr = getattr(self, field)
-                if is_db_native(attr):
-                    print(f"{field} was db native")
-                    values[field] = attr
-                else:
-                    print(f"{field} was not db native")
-                    print(attr.__dict__)
 
+                if not is_db_native(attr):
+                    print(f"{field} was not db native, do not know how to handle")
+                    continue
+
+                values[field] = attr
             
-            db.execute(DBUtil.insert(self.__table__, values))
+            db.execute(DBUtil.insert(self.__table__, values), do_after=do_after)
+
+        def save(self):
+            self.__save__(None)
         
 
         def back_to_entity(obj, row: dict):
@@ -79,8 +90,10 @@ class Entity(object):
                 setattr(self, field, value)
             return _set
 
+
         fields_to_set = {
             "__init__": init_factory(self.__table__),
+            "__save__": __save__,
             'save': save,
             'get_all': get_all_m,
             'get_by_id': get_by_id_m,
@@ -88,10 +101,13 @@ class Entity(object):
 
         for field in fields:
             backer = f"__{field}__"
-        
             fields_to_set[field] = property(get_factory(backer), set_factory(backer))
 
-        to_return = type(clazz.__name__, (), fields_to_set)
+        for field in relations:
+            backer = f"__{field}__"
+            fields_to_set[field] = property(relationship_get_factory(backer), relationship_set_factory(backer))
+
+        to_return = type(clazz.__name__, (Entity,), fields_to_set)
 
 
         return to_return

@@ -1,3 +1,4 @@
+from db.relationships import OneToMany
 from decorators.Entity import Entity
 from datetime import date
 
@@ -11,7 +12,7 @@ class Author():
 @Entity("books")
 class Book():
     title: str
-    author: Author
+    author: OneToMany(Author, "author_id", "id")
 
 
 def main():
@@ -22,7 +23,7 @@ def main():
 
     book = Book()
     book.title = "The Lord of the Rings"
-    book.author = author
+    book.author.add(author)
 
     #author.save()
     #print(Author.get_all())
