@@ -37,6 +37,9 @@ def main():
     
     author.save()
 
+    author.name = "Jane Doe"
+    author.save()
+
     #print([author.__dict__ for author in Author.get_all()])
 
 if __name__ == '__main__':

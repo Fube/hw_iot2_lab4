@@ -22,3 +22,12 @@ class DBUtil():
             sql += "%s='%s' and " % (key, data[key])
         sql = sql[:-4]
         return sql
+
+    @staticmethod
+    def update_by_id(table: str, data: dict, id: int) -> str:
+        sql = "update %s set " % table
+        for key in data:
+            sql += "%s='%s'," % (key, data[key])
+        sql = sql[:-1]
+        sql += " where id=%d" % id
+        return sql

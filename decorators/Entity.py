@@ -26,6 +26,10 @@ class Entity():
             if not self.__changed__:
                 return
 
+            if self.__managed__:
+                self.__update__()
+                return
+
             values = dict()
 
             for field in fields:
@@ -40,6 +44,21 @@ class Entity():
                 values[field] = attr
 
             db.execute(DBUtil.insert(self.__table__, values), do_after=do_after)
+            self.__managed__ = True
+
+        def __update__(self):
+            values = dict()
+
+            for field in fields:
+                attr = getattr(self, field)
+
+                if not is_db_native(attr):
+                    print(f"{field} was not db native, do not know how to handle")
+                    continue
+
+                values[field] = attr
+
+            db.execute(DBUtil.update_by_id(self.__table__, values, self.id))
 
         def save(self):
             def inner(cursor):
@@ -72,7 +91,8 @@ class Entity():
             for row in raw:
                 obj = cls()
                 ret.append(back_to_entity(obj, row))
-            obj.__changed__ = False # It has not changed, it has been retrieved from db
+                obj.__managed__ = True
+                obj.__changed__ = False # It has not changed, it has been retrieved from db
 
             return ret
 
@@ -82,6 +102,7 @@ class Entity():
             raw = db.query(DBUtil.select_by_id(self.__table__, id))
             obj = cls()
             back_to_entity(obj, raw[0])
+            obj.__managed__ = True
             obj.__changed__ = False
 
             return obj
@@ -92,7 +113,7 @@ class Entity():
         def init_factory(table_name):
             def init(self):
                 self.__changed__ = False
-                self.__managed__ = True
+                self.__managed__ = False
                 self.__table__ = table_name
             return init
 
@@ -110,6 +131,7 @@ class Entity():
 
         fields_to_set = {
             "__init__": init_factory(self.__table__),
+            "__update__": __update__,
             "__save__": __save__,
             'save': save,
             'get_all': get_all,
