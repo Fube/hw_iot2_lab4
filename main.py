@@ -37,12 +37,15 @@ def main():
     
     author.save()
 
+    # Update
     author.name = "Jane Doe"
+    book.title = "The Hobbit 2"
     author.save()
+
 
     print([book.id for book in author.books.get()])
 
-    author.delete()
+    #author.delete()
 
 if __name__ == '__main__':
     main()

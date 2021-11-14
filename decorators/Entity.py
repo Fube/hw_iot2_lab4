@@ -45,6 +45,7 @@ class Entity():
 
             db.execute(DBUtil.insert(self.__table__, values), do_after=do_after)
             self.__managed__ = True
+            self.__changed__ = False
 
         def __update__(self):
             values = dict()
@@ -59,6 +60,11 @@ class Entity():
                 values[field] = attr
             # TODO: Generalize this to rely on a PK rather than presuming an ID
             db.execute(DBUtil.update_by_id(self.__table__, values, self.id))
+            self.__managed__ = True
+            self.__changed__ = False
+
+            for relation in relations:
+                    getattr(self, relation).save()
 
         def save(self):
             def inner(cursor):
