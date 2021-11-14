@@ -119,8 +119,6 @@ class Entity():
             
             return ret
 
-        # get_all_m = classmethod(get_all)
-        # get_by_id_m = classmethod(get_by_id)
                 
         def init_factory(table_name):
             def init(self):

@@ -42,7 +42,5 @@ def main():
 
     print([book.id for book in author.books.get()])
 
-    #print([author.__dict__ for author in Author.get_all()])
-
 if __name__ == '__main__':
     main()
