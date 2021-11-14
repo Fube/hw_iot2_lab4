@@ -63,7 +63,7 @@ class Entity():
                 setattr(obj, field, row[field])
             return obj                
 
-
+        @classmethod
         def get_all(cls):
             ret = []
             raw = db.query(DBUtil.select_all(self.__table__))
@@ -75,6 +75,7 @@ class Entity():
             return ret
 
         
+        @classmethod
         def get_by_id(cls, id):
             raw = db.query(DBUtil.select_by_id(self.__table__, id))
             obj = cls()
@@ -82,10 +83,9 @@ class Entity():
             obj.__changed__ = False
 
             return obj
-                    
 
-        get_all_m = classmethod(get_all)
-        get_by_id_m = classmethod(get_by_id)
+        # get_all_m = classmethod(get_all)
+        # get_by_id_m = classmethod(get_by_id)
                 
         def init_factory(table_name):
             def init(self):
@@ -110,8 +110,8 @@ class Entity():
             "__init__": init_factory(self.__table__),
             "__save__": __save__,
             'save': save,
-            'get_all': get_all_m,
-            'get_by_id': get_by_id_m,
+            'get_all': get_all,
+            'get_by_id': get_by_id,
         }
 
         for field in fields:

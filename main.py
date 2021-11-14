@@ -17,22 +17,24 @@ class Book():
 
 
 def main():
-    author = Author()
-    author.name = "John Doe"
-    author.birth_date = date(1955, 1, 1)
-    author.death_date = date(2000, 1, 1)
+    # author = Author()
+    # author.name = "John Doe"
+    # author.birth_date = date(1955, 1, 1)
+    # author.death_date = date(2000, 1, 1)
 
-    book = Book()
-    book.title = "The Lord of the Rings"
+    # book = Book()
+    # book.title = "The Lord of the Rings"
 
-    author.books.add(book)
+    # author.books.add(book)
 
-    book = Book()
-    book.title = "The Hobbit"
+    # book = Book()
+    # book.title = "The Hobbit"
 
-    author.books.add(book)
+    # author.books.add(book)
+    
+    # author.save()
 
-    author.save()
+    print([author.__dict__ for author in Author.get_all()])
 
 if __name__ == '__main__':
     main()
