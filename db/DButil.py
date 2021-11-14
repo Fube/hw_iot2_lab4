@@ -16,7 +16,7 @@ class DBUtil():
         return "select * from %s where id=%d" % (table, id)
 
     @staticmethod
-    def get_all_where(table: str, data: dict) -> str:
+    def select_all_where(table: str, data: dict) -> str:
         sql = "select * from %s where " % table
         for key in data:
             sql += "%s='%s' and " % (key, data[key])

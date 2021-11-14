@@ -20,4 +20,11 @@ class OneToMany(Relationship):
         for item in self._value:
             item.save()
     
-
+    def get(self):
+        managed = getattr(self.foobar, '__managed__')
+        if not managed:
+            return self._value
+            
+        reverse = getattr(self.foobar, self.inverse_mapped_by)
+        raw = self.model.get_all_where({ self.mapped_by: reverse })
+        return raw

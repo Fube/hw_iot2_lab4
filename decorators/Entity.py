@@ -107,6 +107,18 @@ class Entity():
 
             return obj
 
+        @classmethod
+        def get_all_where(cls, where):
+            ret = []
+            raw = db.query(DBUtil.select_all_where(self.__table__, where))
+            for row in raw:
+                obj = cls()
+                ret.append(back_to_entity(obj, row))
+                obj.__managed__ = True
+                obj.__changed__ = False
+            
+            return ret
+
         # get_all_m = classmethod(get_all)
         # get_by_id_m = classmethod(get_by_id)
                 
@@ -115,6 +127,8 @@ class Entity():
                 self.__changed__ = False
                 self.__managed__ = False
                 self.__table__ = table_name
+                for relation in relations:
+                    members[relation].foobar = self
             return init
 
         def get_factory(field):
@@ -136,6 +150,7 @@ class Entity():
             'save': save,
             'get_all': get_all,
             'get_by_id': get_by_id,
+            'get_all_where': get_all_where,
         }
 
         for field in fields:
