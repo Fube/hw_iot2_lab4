@@ -36,11 +36,26 @@ class Entity():
                     continue
 
                 values[field] = attr
-            
+
             db.execute(DBUtil.insert(self.__table__, values), do_after=do_after)
 
         def save(self):
-            self.__save__(None)
+            def inner(cursor):
+                inserted_id = cursor.lastrowid
+                if not inserted_id:
+                    return
+                self.id = inserted_id
+                for relation in relations:
+                    relation_value = members[relation]
+                    if isinstance(relation_value, OneToMany):
+                        for v in relation_value.__value__:
+                            self_attr = getattr(self, relation_value.inverse_mapped_by)
+                            setattr(v, relation_value.mapped_by, self_attr)
+
+                        relation_value.save()
+
+                        
+            self.__save__(do_after=inner)
         
 
         def back_to_entity(obj, row: dict):
@@ -103,9 +118,8 @@ class Entity():
             backer = f"__{field}__"
             fields_to_set[field] = property(get_factory(backer), set_factory(backer))
 
-        for field in relations:
-            backer = f"__{field}__"
-            fields_to_set[field] = property(relationship_get_factory(backer), relationship_set_factory(backer))
+        for relation in relations:
+            fields_to_set[relation] = members[relation]
 
         to_return = type(clazz.__name__, (Entity,), fields_to_set)
 

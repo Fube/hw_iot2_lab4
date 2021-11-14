@@ -7,12 +7,13 @@ class Author():
     name: str
     birth_date: date
     death_date: date
+    books: OneToMany("books", "author_id", "id")
 
 
 @Entity("books")
 class Book():
     title: str
-    author: OneToMany(Author, "author_id", "id")
+    author_id: int
 
 
 def main():
@@ -23,13 +24,15 @@ def main():
 
     book = Book()
     book.title = "The Lord of the Rings"
-    book.author.add(author)
 
-    #author.save()
-    #print(Author.get_all())
-    #print(Author.get_by_id(1).name)
+    author.books.add(book)
 
-    book.save()
+    book = Book()
+    book.title = "The Hobbit"
+
+    author.books.add(book)
+
+    author.save()
 
 if __name__ == '__main__':
     main()
