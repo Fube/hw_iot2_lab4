@@ -57,7 +57,7 @@ class Entity():
                     continue
 
                 values[field] = attr
-
+            # TODO: Generalize this to rely on a PK rather than presuming an ID
             db.execute(DBUtil.update_by_id(self.__table__, values, self.id))
 
         def save(self):
@@ -69,7 +69,7 @@ class Entity():
                 for relation in relations:
                     relation_value = members[relation]
                     if isinstance(relation_value, OneToMany):
-                        for v in relation_value.__value__:
+                        for v in relation_value._value:
                             self_attr = getattr(self, relation_value.inverse_mapped_by)
                             setattr(v, relation_value.mapped_by, self_attr)
 

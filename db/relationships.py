@@ -6,18 +6,18 @@ class Relationship():
     pass
 
 class OneToMany(Relationship):
-    __value__: set
+    _value: set
     def __init__(self, model: object, mapped_by: str, inverse_mapped_by: str):
         self.model = model
         self.mapped_by = mapped_by    
         self.inverse_mapped_by = inverse_mapped_by
-        self.__value__ = set()
+        self._value = set()
 
     def add(self, item):
-        self.__value__.add(item)
+        self._value.add(item)
 
     def save(self):
-        for item in self.__value__:
+        for item in self._value:
             item.save()
     
 
