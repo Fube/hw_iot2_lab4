@@ -31,3 +31,7 @@ class DBUtil():
         sql = sql[:-1]
         sql += " where id=%d" % id
         return sql
+
+    @staticmethod
+    def delete_by_id(table: str, id: int) -> str:
+        return "delete from %s where id=%d" % (table, id)

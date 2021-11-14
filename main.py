@@ -42,5 +42,7 @@ def main():
 
     print([book.id for book in author.books.get()])
 
+    author.delete()
+
 if __name__ == '__main__':
     main()

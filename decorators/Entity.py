@@ -78,6 +78,9 @@ class Entity():
                         
             self.__save__(do_after=inner)
         
+        def delete(self):
+            # TODO: Generalize this to rely on a PK rather than presuming an ID
+            db.execute(DBUtil.delete_by_id(self.__table__, self.id))
 
         def back_to_entity(obj, row: dict):
             for field in fields:
@@ -149,6 +152,7 @@ class Entity():
             'get_all': get_all,
             'get_by_id': get_by_id,
             'get_all_where': get_all_where,
+            'delete': delete
         }
 
         for field in fields:
