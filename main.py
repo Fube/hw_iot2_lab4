@@ -11,11 +11,15 @@ def main():
 
     book = Book()
     book.title = "The Lord of the Rings"
+    book.number_of_pages = 1234
+    book.publication_date = date(1954, 1, 1)
 
     author.books.add(book)
 
     book = Book()
     book.title = "The Hobbit"
+    book.number_of_pages = 5678
+    book.publication_date = date(1937, 1, 1)
 
     author.books.add(book)
     
